@@ -2,8 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import useRateMovie from "../hooks/useRateMovie";
 
-export default function RateMovie() {
-  const { movieId } = useParams(); 
+export default function RateMovie({ onClose }) {
+  const { movieId } = useParams();
   const navigate = useNavigate();
   const { rateMovie, loading, error, success } = useRateMovie();
 
@@ -17,14 +17,18 @@ export default function RateMovie() {
       score,
       comment,
     });
-    if (result) navigate(`/movies/${movieId}`);
+
+    if (result) {
+      onClose?.(); // close modal
+      navigate(`/movies/${movieId}`); // refresh movie detail
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md"
+        className="bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md text-white"
       >
         <h1 className="text-2xl font-bold text-indigo-400 mb-4">⭐ Rate Movie</h1>
 
@@ -49,7 +53,7 @@ export default function RateMovie() {
           rows="4"
         />
 
-        {/* Errors */}
+        {/* Errors & Success */}
         {error && <p className="text-red-500 mt-2">{error}</p>}
         {success && <p className="text-green-500 mt-2">Rating submitted!</p>}
 
@@ -57,7 +61,7 @@ export default function RateMovie() {
         <div className="flex justify-between mt-6">
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={onClose || (() => navigate(-1))}
             className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded"
           >
             Cancel

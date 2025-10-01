@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function useRateMovie() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -10,7 +12,6 @@ export default function useRateMovie() {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    
 
     try {
       const token = localStorage.getItem("token");
@@ -18,15 +19,15 @@ export default function useRateMovie() {
 
       // Decode token to extract user ID
       const decoded = jwtDecode(token);
-      const user_id = decoded?.user_id || decoded?.id; 
+      const user_id = decoded?.user_id || decoded?.id;
 
       if (!user_id) throw new Error("Invalid token: user id missing");
 
-      const res = await fetch("http://127.0.0.1:8000/api/ratings/", {
+      const res = await fetch(`${API_URL}/ratings/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ user_id, movie_id, score, comment }),
       });
@@ -37,7 +38,6 @@ export default function useRateMovie() {
       }
 
       setSuccess(true);
-      na
       return true;
     } catch (err) {
       setError(err.message);
