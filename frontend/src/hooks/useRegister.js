@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function useRegister() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const register = async (username, email, password) => {
     setLoading(true);
@@ -18,9 +16,9 @@ export default function useRegister() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Registration failed");
+      
       setLoading(false);
-      navigate("/");
-      return true;
+      return true; 
     } catch (err) {
       setError(err.message);
       setLoading(false);

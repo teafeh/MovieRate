@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const login = async (email, password) => {
     setLoading(true);
@@ -24,10 +22,7 @@ export default function useLogin() {
 
       localStorage.setItem("token", data.access_token);
       setLoading(false);
-
-      // Navigate to home after successful login
-      navigate("/"); 
-      return true;
+      return true; 
     } catch (err) {
       setError(err.message);
       setLoading(false);

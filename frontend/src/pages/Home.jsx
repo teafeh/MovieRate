@@ -53,32 +53,35 @@ export default function Home() {
       {error && <p className="text-red-500">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl mb-10">
-        {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="bg-gray-800 rounded-xl shadow-lg p-5 text-center hover:scale-105 transition-transform"
+  {movies.map((movie) => (
+        <div
+          key={movie.id}
+          onClick={() => navigate(`/movies/${movie.id}`)}
+          className="bg-gray-800 rounded-xl shadow-lg p-5 text-center hover:scale-105 transition-transform cursor-pointer"
+        >
+          {/* Title is no longer uniquely clickable, it naturally inherits the card's click action */}
+          <h2 className="text-xl font-semibold mb-2">
+            {movie.title}
+          </h2>
+          <p className="text-gray-400 mb-1">
+            {movie.genre} | {movie.release_year}
+          </p>
+          <p className="text-yellow-400 font-bold mb-3">
+            ⭐ {movie.avg_rating ?? "N/A"} ({movie.ratings_count})
+          </p>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // 👈 Stops the card click from triggering when rating
+              navigate(`/rate/${movie.id}`);
+            }}
+            className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded relative z-10"
           >
-            <h2
-              className="text-xl font-semibold mb-2 cursor-pointer"
-              onClick={() => navigate(`/movies/${movie.id}`)}
-            >
-              {movie.title}
-            </h2>
-            <p className="text-gray-400 mb-1">
-              {movie.genre} | {movie.release_year}
-            </p>
-            <p className="text-yellow-400 font-bold mb-3">
-              ⭐ {movie.avg_rating ?? "N/A"} ({movie.ratings_count})
-            </p>
-            <button
-              onClick={() => navigate(`/rate/${movie.id}`)}
-              className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded"
-            >
-              ⭐ Rate
-            </button>
-          </div>
-        ))}
-      </div>
+            ⭐ Rate
+          </button>
+        </div>
+  ))}
+</div>
 
       {/* Pagination */}
       <div className="flex justify-center items-center gap-4 mb-10">
@@ -101,38 +104,40 @@ export default function Home() {
       <h2 className="text-2xl font-bold text-indigo-300 mb-4">🎯 Movies I Rated</h2>
       {!loading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl">
-          {userMovies.length > 0 ? (
-            userMovies.map((rating) => (
-              <div
-                key={rating.movie.id}
-                className="bg-gray-800 rounded-xl shadow-lg p-5 text-center hover:scale-105 transition-transform"
-              >
-                <h2
-                  className="text-xl font-semibold mb-2 cursor-pointer"
-                  onClick={() => navigate(`/movies/${rating.movie.id}`)}
-                >
-                  {rating.movie.title}
-                </h2>
-                <p className="text-gray-400 mb-1">
-                  {rating.movie.genre} | {rating.movie.release_year}
-                </p>
-                <p className="text-yellow-400 font-bold mb-3">
-                  ⭐ Your Rating: {rating.score}
-                </p>
-                <button
-                  onClick={() => navigate(`/rate/${rating.movie.id}`)}
-                  className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded"
-                >
-                  ⭐ Rate Again
-                </button>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-400 col-span-full">
-              You haven't rated any movies yet.
-            </p>
-          )}
-        </div>
+  {userMovies.length > 0 ? (
+    userMovies.map((rating) => (
+      <div
+        key={rating.movie.id}
+        onClick={() => navigate(`/movies/${rating.movie.id}`)}
+        className="bg-gray-800 rounded-xl shadow-lg p-5 text-center hover:scale-105 transition-transform cursor-pointer"
+      >
+        {/* Title naturally inherits the card's navigation logic now */}
+        <h2 className="text-xl font-semibold mb-2">
+          {rating.movie.title}
+        </h2>
+        <p className="text-gray-400 mb-1">
+          {rating.movie.genre} | {rating.movie.release_year}
+        </p>
+        <p className="text-yellow-400 font-bold mb-3">
+          ⭐ Your Rating: {rating.score}
+        </p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); 
+            navigate(`/rate/${rating.movie.id}`);
+          }}
+          className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded relative z-10"
+        >
+          ⭐ Rate Again
+        </button>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-400 col-span-full">
+      You haven't rated any movies yet.
+    </p>
+  )}
+</div>
       )}
     </div>
   );
